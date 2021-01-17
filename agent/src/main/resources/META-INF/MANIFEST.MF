@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Premain-Class: org.example.AgentMain
+Agent-Class: org.example.AgentMain
+Can-Redefine-Classes: true
+Can-Retransform-Classes: true
