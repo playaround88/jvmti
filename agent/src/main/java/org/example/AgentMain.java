@@ -1,5 +1,8 @@
 package org.example;
 
+import org.example.cv.ClassPrinter;
+import org.objectweb.asm.ClassReader;
+
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -14,7 +17,7 @@ import java.security.ProtectionDomain;
 public class AgentMain {
     // JVM启动时agent
     public static void premain(String agentArgs, Instrumentation inst) {
-        agent0(agentArgs, inst);
+        agent1(agentArgs, inst);
     }
 
     // JVM运行时agent
@@ -36,6 +39,25 @@ public class AgentMain {
                 // 判断那些类要做打桩
                 if (className.endsWith("WorkerMain")) {
                     System.out.println("transform class WorkerMain");
+                }
+                // 直接返回，不做二进制打桩
+                return classfileBuffer;
+            }
+        });
+    }
+
+    private static void agent1(String agentArgs, Instrumentation inst) {
+        System.out.print("agent1 is running!");
+        inst.addTransformer(new ClassFileTransformer() {
+            @Override
+            public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+                if (className.endsWith("WorkerMain")) {
+
+                    ClassPrinter classPrinter = new ClassPrinter();
+
+                    ClassReader classReader = new ClassReader(classfileBuffer);
+
+                    classReader.accept(classPrinter, 0);
                 }
                 // 直接返回，不做二进制打桩
                 return classfileBuffer;
