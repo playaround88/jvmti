@@ -29,7 +29,7 @@ public class AddTimerAdapter extends ClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
-        if (!isInterface && mv != null && !name.equals("<init>")){
+        if (!isInterface && mv != null && !name.equals("<init>") && !name.equals("main")){
             mv = new AddTimerMethodAdapter(mv, owner);
         }
         return mv;
@@ -38,7 +38,7 @@ public class AddTimerAdapter extends ClassVisitor {
     @Override
     public void visitEnd() {
         if (!isInterface){
-            FieldVisitor fv = cv.visitField(ACC_PUBLIC + ACC_STATIC, "timer", "J", null, null);
+            FieldVisitor fv = cv.visitField(ACC_PUBLIC + ACC_STATIC + ACC_VOLATILE, "timer", "J", null, null);
             if(fv != null) {
                 fv.visitEnd();
             }

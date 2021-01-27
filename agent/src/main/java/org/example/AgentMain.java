@@ -4,7 +4,9 @@ import org.example.cv.AddTimerAdapter;
 import org.example.cv.ClassPrinter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.util.TraceClassVisitor;
 
+import java.io.PrintWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
@@ -76,7 +78,12 @@ public class AgentMain {
                     ClassReader classReader = new ClassReader(classfileBuffer);
                     ClassWriter cw = new ClassWriter(classReader, 0);
 
-                    AddTimerAdapter addTimerAdapter = new AddTimerAdapter(cw);
+                    // 调试打印生成的类
+                    PrintWriter printWriter = new PrintWriter(System.out);
+                    TraceClassVisitor tcv = new TraceClassVisitor(cw, printWriter);
+
+                    // 执行时间植入
+                    AddTimerAdapter addTimerAdapter = new AddTimerAdapter(tcv);
 
                     classReader.accept(addTimerAdapter, 0);
                     return cw.toByteArray();

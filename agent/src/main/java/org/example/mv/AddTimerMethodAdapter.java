@@ -32,10 +32,11 @@ public class AddTimerMethodAdapter extends MethodVisitor {
             mv.visitMethodInsn(INVOKESTATIC, "java/lang/System",
                     "currentTimeMillis", "()J", false);
             mv.visitInsn(LADD);
-            mv.visitInsn(DUP);
             mv.visitFieldInsn(PUTSTATIC, owner, "timer", "J");
-            mv.visitMethodInsn(INVOKESTATIC, "java/lang/System", "println", "(J)V", false);
 
+            mv.visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
+            mv.visitFieldInsn(GETSTATIC, owner, "timer", "J");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(J)V", false);
         }
         mv.visitInsn(opcode);
     }
